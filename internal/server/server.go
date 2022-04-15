@@ -1,7 +1,7 @@
 package server
 
 import (
-	config "app/configs"
+	config "app/internal/configs"
 	"context"
 	"net/http"
 	"time"

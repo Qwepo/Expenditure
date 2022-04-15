@@ -1,7 +1,7 @@
 package service
 
 import (
-	"app/pkg/db"
+	"app/internal/db"
 )
 
 type Payment interface {
@@ -9,7 +9,9 @@ type Payment interface {
 }
 
 type PaymentService struct {
-	db db.DB
+	db            db.DB
+	counterparty  *Counterparty
+	organizaotion *Organizations
 }
 
 type PaymentFullRequest struct {
@@ -46,6 +48,6 @@ func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int64, error) 
 	return id, nil
 }
 
-func NewPaymentServices(db db.DB) Payment {
-	return &PaymentService{db: db}
+func NewPaymentServices(db db.DB, counterparty Counterparty, organizaotion Organizations) Payment {
+	return &PaymentService{db: db, counterparty: &counterparty, organizaotion: &organizaotion}
 }

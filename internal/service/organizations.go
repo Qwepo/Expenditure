@@ -1,12 +1,12 @@
 package service
 
-import "app/pkg/db"
+import "app/internal/db"
 
 type Organizations interface {
 	OrganizationCreate(*OrganizationRequest) (int64, error)
 }
 
-type OrganizationServices struct {
+type organizationServices struct {
 	db db.DB
 }
 
@@ -14,7 +14,7 @@ type OrganizationRequest struct {
 	Name string `json:"name"`
 }
 
-func (org *OrganizationServices) OrganizationCreate(resp *OrganizationRequest) (int64, error) {
+func (org *organizationServices) OrganizationCreate(resp *OrganizationRequest) (int64, error) {
 	var o db.Organizations
 	o.Name = resp.Name
 	id, err := org.db.OrganizationCreate(&o)
@@ -25,5 +25,5 @@ func (org *OrganizationServices) OrganizationCreate(resp *OrganizationRequest) (
 }
 
 func NewOrganizationServices(db db.DB) Organizations {
-	return &OrganizationServices{db: db}
+	return &organizationServices{db: db}
 }

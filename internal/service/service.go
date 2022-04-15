@@ -1,15 +1,17 @@
 package service
 
-import "app/pkg/db"
+import "app/internal/db"
 
 type Service struct {
-	Payment       Payment
 	Organizations Organizations
+	Counterparty  Counterparty
+	Payment       Payment
 }
 
 func NewService(db db.DB) *Service {
 	return &Service{
-		Payment:       NewPaymentServices(db),
 		Organizations: NewOrganizationServices(db),
+		Counterparty: NewCounterpartyServices(db),
+		Payment:       NewPaymentServices(db),
 	}
 }
