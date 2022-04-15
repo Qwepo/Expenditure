@@ -1,0 +1,6 @@
+server:
+  port: "8080"
+db:
+  dbname: expenditure
+  port: "5432"
+  username: postgres
