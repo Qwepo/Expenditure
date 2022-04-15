@@ -14,7 +14,7 @@ type CounterpartyRequest struct {
 	Name string `json:"name"`
 }
 
-func (c *CounterpartyServices) Counterpartyreate(resp *CounterpartyRequest) (int64, error) {
+func (c *CounterpartyServices) CounterpartyCreate(resp *CounterpartyRequest) (int64, error) {
 	var cp db.Counterparty
 	cp.Name = resp.Name
 	id, err := c.db.CounterpartyCreate(&cp)
@@ -25,5 +25,5 @@ func (c *CounterpartyServices) Counterpartyreate(resp *CounterpartyRequest) (int
 }
 
 func NewCounterpartyServices(db db.DB) Counterparty {
-	return 
+	return &CounterpartyServices{db: db}
 }

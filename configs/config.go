@@ -44,7 +44,3 @@ func LoadConfig() Config {
 	}
 	return conf
 }
-
-// func (c *Config) SetConfig() {
-
-// }
