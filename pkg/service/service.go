@@ -2,17 +2,14 @@ package service
 
 import "app/pkg/db"
 
-type Payment interface {
-}
-
-type Expenditure interface {
-}
-
 type Service struct {
-	Payment
-	Expenditure
+	Payment       Payment
+	Organizations Organizations
 }
 
 func NewService(db db.DB) *Service {
-	return &Service{}
+	return &Service{
+		Payment:       NewPaymentServices(db),
+		Organizations: NewOrganizationServices(db),
+	}
 }

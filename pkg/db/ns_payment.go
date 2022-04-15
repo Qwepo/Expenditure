@@ -12,9 +12,9 @@ const (
 )
 
 type dbPayment interface {
-	OrganizationCreate(*Organizations) (int64 error)
-	CounterpartyCreate(*Counterparty) (int64 error)
-	PaymentCreate(*Payment) (int64 error)
+	OrganizationCreate(*Organizations) (int64, error)
+	CounterpartyCreate(*Counterparty) (int64, error)
+	PaymentCreate(*Payment) (int64, error)
 }
 
 type Payment struct {
@@ -32,11 +32,11 @@ type Payment struct {
 
 type Organizations struct {
 	ID   int64  `json:"id"`
-	Name string `json:"name" `
+	Name string `json:"name"`
 }
 type Counterparty struct {
 	ID   int64  `json:"id"`
-	Name string `json:"name" `
+	Name string `json:"name"`
 }
 
 func (db *clietn) OrganizationCreate(org *Organizations) (int64, error) {
