@@ -3,20 +3,16 @@ package service
 import "app/internal/db"
 
 type Counterparty interface {
-	CounterpartyCreate(*CounterpartyRequest) (int64, error)
+	CounterpartyCreate(*PaymentFullRequest) (int64, error)
 }
 
 type сounterpartyServices struct {
 	db db.DB
 }
 
-type CounterpartyRequest struct {
-	Name string `json:"name"`
-}
-
-func (c *сounterpartyServices) CounterpartyCreate(resp *CounterpartyRequest) (int64, error) {
+func (c *сounterpartyServices) CounterpartyCreate(resp *PaymentFullRequest) (int64, error) {
 	var cp db.Counterparty
-	cp.Name = resp.Name
+	cp.Name = resp.CounterpartyName
 	id, err := c.db.CounterpartyCreate(&cp)
 	if err != nil {
 		return 0, err

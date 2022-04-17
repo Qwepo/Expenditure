@@ -11,9 +11,11 @@ type Server struct {
 	httpServer *http.Server
 }
 
-func (s *Server) Run(conf *config.Config) error {
+func (s *Server) Run(conf *config.Config, handler http.Handler) error {
+
 	s.httpServer = &http.Server{
 		Addr:         ":" + conf.Server.Port,
+		Handler:      handler,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

@@ -2,6 +2,7 @@ package service
 
 import (
 	"app/internal/db"
+	"time"
 )
 
 type Payment interface {
@@ -10,36 +11,44 @@ type Payment interface {
 
 type PaymentService struct {
 	db            db.DB
-	counterparty  *Counterparty
-	organizaotion *Organizations
+	counterparty  Counterparty
+	organizaotion Organizations
 }
 
 type PaymentFullRequest struct {
-	Doctype            string `json:"doctype"`
-	OrganizationName   string `json:"organizationName"`
-	CounterpartyName   string `json:"counterpartyName"`
-	OrganizationID     int64  `json:"organizationId"`
-	CounterpartyID     int64  `json:"counterpartyId"`
-	IncomingCurrency   int64  `json:"incomingCurrency"`
-	ExpendableCurrency int64  `json:"expendableCurrency"`
-	Purpose            string `json:"purpose"`
-	Expenditure        string `json:"expenditure"`
-	Comments           string `json:"comments"`
+	Doctype            *string `json:"doctype"`
+	OrganizationName   *string `json:"organizationName"`
+	CounterpartyName   *string `json:"counterpartyName"`
+	IncomingCurrency   *int64  `json:"incomingCurrency"`
+	ExpendableCurrency *int64  `json:"expendableCurrency"`
+	Purpose            *string `json:"purpose"`
+	Expenditure        *string `json:"expenditure"`
+	Comments           string  `json:"comments"`
 }
 
 func (r *PaymentFullRequest) fillTo(p *db.Payment) {
-	r.Doctype = p.Doctype
-	r.OrganizationID = p.OrganizationID
-	r.CounterpartyID = p.CounterpartyID
-	r.IncomingCurrency = p.IncomingCurrency
-	r.ExpendableCurrency = p.ExpendableCurrency
-	r.Purpose = p.Purpose
-	r.Expenditure = p.Expenditure
-	r.Comments = p.Comments
+	p.Doctype = r.Doctype
+	p.IncomingCurrency = r.IncomingCurrency
+	p.ExpendableCurrency = r.ExpendableCurrency
+	p.Purpose = r.Purpose
+	p.Expenditure = r.Expenditure
+	p.Comments = r.Comments
 }
 
 func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int64, error) {
 	var payment db.Payment
+	time := time.Now()
+	cpID, err := p.counterparty.CounterpartyCreate(resp)
+	if err != nil {
+		return 0, err
+	}
+	orgID, err := p.organizaotion.OrganizationCreate(resp)
+	if err != nil {
+		return 0, err
+	}
+	payment.CounterpartyID = &cpID
+	payment.OrganizationID = &orgID
+	payment.CreatedAt = &time
 	resp.fillTo(&payment)
 	id, err := p.db.PaymentCreate(&payment)
 	if err != nil {
@@ -49,5 +58,5 @@ func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int64, error) 
 }
 
 func NewPaymentServices(db db.DB, counterparty Counterparty, organizaotion Organizations) Payment {
-	return &PaymentService{db: db, counterparty: &counterparty, organizaotion: &organizaotion}
+	return &PaymentService{db: db, counterparty: counterparty, organizaotion: organizaotion}
 }

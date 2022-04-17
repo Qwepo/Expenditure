@@ -9,9 +9,11 @@ type Service struct {
 }
 
 func NewService(db db.DB) *Service {
+	org := NewOrganizationServices(db)
+	cp := NewCounterpartyServices(db)
 	return &Service{
-		Organizations: NewOrganizationServices(db),
-		Counterparty: NewCounterpartyServices(db),
-		Payment:       NewPaymentServices(db),
+		Organizations: org,
+		Counterparty:  cp,
+		Payment:       NewPaymentServices(db, cp, org),
 	}
 }

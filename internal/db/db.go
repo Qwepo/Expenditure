@@ -1,7 +1,7 @@
 package db
 
 import (
-	config "app/configs"
+	config "app/internal/configs"
 	"context"
 	"fmt"
 

@@ -1,11 +1,11 @@
 package main
 
 import (
-	config "app/configs"
-	"app/pkg/db"
-	"app/pkg/hanlder"
-	"app/pkg/service"
-	"app/server"
+	config "app/internal/configs"
+	"app/internal/db"
+	"app/internal/server"
+	"app/internal/service"
+	"app/internal/web"
 	"log"
 )
 
@@ -17,10 +17,9 @@ func main() {
 	}
 
 	service := service.NewService(db)
-	handler := hanlder.NewHandler(service)
-
+	router := web.NewRouter(service)
 	srv := new(server.Server)
-	if err := srv.Run(&conf); err != nil {
+	if err := srv.Run(&conf, router); err != nil {
 		log.Fatal(err)
 	}
 
