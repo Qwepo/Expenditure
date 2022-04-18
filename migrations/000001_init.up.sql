@@ -1,13 +1,19 @@
 CREATE TABLE organizations
 (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(150)
+    name VARCHAR(150) NOT NULL
 );
 
 CREATE TABLE counterpartys
 (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(150)
+    name VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE project
+(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(150) NOT NULL
 );
 
 CREATE TABLE payment
@@ -21,5 +27,6 @@ CREATE TABLE payment
     expendable_currency NUMERIC NOT NULL,
     purpose VARCHAR(150) NOT NULL,
     expenditure VARCHAR(150) NOT NULL,
+    project_id INTEGER REFERENCES project(id) NOT NULL,
     comments VARCHAR(150)
 );

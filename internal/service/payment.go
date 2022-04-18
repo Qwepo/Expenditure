@@ -13,6 +13,7 @@ type PaymentService struct {
 	db            db.DB
 	counterparty  Counterparty
 	organizaotion Organizations
+	project       Project
 }
 
 type PaymentFullRequest struct {
@@ -23,6 +24,7 @@ type PaymentFullRequest struct {
 	ExpendableCurrency *int64  `json:"expendableCurrency"`
 	Purpose            *string `json:"purpose"`
 	Expenditure        *string `json:"expenditure"`
+	ProjectName        *string `json:"projectName"`
 	Comments           string  `json:"comments"`
 }
 
@@ -46,8 +48,14 @@ func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int64, error) 
 	if err != nil {
 		return 0, err
 	}
+
+	prID, err := p.project.ProjectCreate(resp)
+	if err != nil {
+		return 0, err
+	}
 	payment.CounterpartyID = &cpID
 	payment.OrganizationID = &orgID
+	payment.ProjectID = &prID
 	payment.CreatedAt = &time
 	resp.fillTo(&payment)
 	id, err := p.db.PaymentCreate(&payment)
@@ -57,6 +65,6 @@ func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int64, error) 
 	return id, nil
 }
 
-func NewPaymentServices(db db.DB, counterparty Counterparty, organizaotion Organizations) Payment {
-	return &PaymentService{db: db, counterparty: counterparty, organizaotion: organizaotion}
+func NewPaymentServices(db db.DB, counterparty Counterparty, organizaotion Organizations, projcet Project) Payment {
+	return &PaymentService{db: db, counterparty: counterparty, organizaotion: organizaotion, project: projcet}
 }

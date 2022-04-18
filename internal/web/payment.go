@@ -2,7 +2,6 @@ package web
 
 import (
 	"app/internal/service"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,8 +19,6 @@ func createPaymont(s *service.Service) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"bad Request": err.Error()})
 			return
 		}
-		fmt.Println(resp.CounterpartyName, resp.IncomingCurrency, resp.Comments, resp.Doctype, resp.OrganizationName)
-
 		id, err := s.Payment.PaymentCreate(&resp)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"bad Request": err.Error()})
