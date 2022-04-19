@@ -67,11 +67,11 @@ func (db *clietn) ExpenditureItemCreate(ex *ExpenditureItem) error {
 	return nil
 }
 func (db *clietn) ExpenditureItemFindeByName(ex *ExpenditureItem) error {
-	query := fmt.Sprintf("SELECT id FROM %s WHERE (name) VALUES ($1)", expenditureItemTable)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE name = $1", expenditureItemTable)
 	row := db.QueryRow(context.TODO(), query, ex.Name)
 	if err := row.Scan(&ex.ID); err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
-			newErr := fmt.Errorf("SQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
+			newErr := fmt.Errorf("aSQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
 			log.Panic(newErr)
 			return nil
 		}
@@ -81,11 +81,11 @@ func (db *clietn) ExpenditureItemFindeByName(ex *ExpenditureItem) error {
 }
 
 func (db *clietn) CounterpartyFindeByName(c *Counterparty) error {
-	query := fmt.Sprintf("SELECT id FROM %s WHERE (name) VALUES ($1)", counterpartysTable)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE name = $1", counterpartysTable)
 	row := db.QueryRow(context.TODO(), query, c.Name)
 	if err := row.Scan(&c.ID); err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
-			newErr := fmt.Errorf("SQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
+			newErr := fmt.Errorf("bSQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
 			log.Panic(newErr)
 			return nil
 		}
@@ -99,7 +99,7 @@ func (db *clietn) CounterpartyCreate(c *Counterparty) error {
 	row := db.QueryRow(context.TODO(), query, c.Name)
 	if err := row.Scan(&c.ID); err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
-			newErr := fmt.Errorf("SQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
+			newErr := fmt.Errorf("cSQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
 			log.Panic(newErr)
 			return nil
 		}
@@ -108,11 +108,11 @@ func (db *clietn) CounterpartyCreate(c *Counterparty) error {
 	return nil
 }
 func (db *clietn) ProjectFindeByName(pr *Project) error {
-	query := fmt.Sprintf("SELECT id FROM %s WHERE (name) VALUES ($1)", projectTable)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE name = $1", projectTable)
 	row := db.QueryRow(context.TODO(), query, pr.Name)
 	if err := row.Scan(&pr.ID); err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
-			newErr := fmt.Errorf("SQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
+			newErr := fmt.Errorf("fSQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
 			log.Panic(newErr)
 			return nil
 		}
@@ -126,7 +126,7 @@ func (db *clietn) ProjectCreate(pr *Project) error {
 	row := db.QueryRow(context.TODO(), query, pr.Name)
 	if err := row.Scan(&pr.ID); err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
-			newErr := fmt.Errorf("SQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
+			newErr := fmt.Errorf("gSQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
 			log.Panic(newErr)
 			return nil
 		}
@@ -143,7 +143,7 @@ func (db *clietn) PaymentCreate(p *Payment) error {
 	err := row.Scan(&id)
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
-			newErr := fmt.Errorf("SQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
+			newErr := fmt.Errorf("zSQL Error: %s, Deatil: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
 			log.Panic(newErr)
 			return nil
 		}

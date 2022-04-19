@@ -26,7 +26,7 @@ CREATE TABLE payment
     incoming_currency NUMERIC NOT NULL,
     expendable_currency NUMERIC NOT NULL,
     purpose VARCHAR(150) NOT NULL,
-    expenditure_id INTEGER REFERENCES expenditure(id) NOT NULL,,
+    expenditure_id INTEGER REFERENCES expenditure(id) NOT NULL,
     project_id INTEGER REFERENCES project(id) NOT NULL,
     comments VARCHAR(150)
 );
