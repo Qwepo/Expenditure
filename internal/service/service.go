@@ -1,6 +1,10 @@
 package service
 
-import "app/internal/db"
+import (
+	"app/internal/db"
+
+	"github.com/sirupsen/logrus"
+)
 
 type Service struct {
 	ExpenditureItem ExpenditureItem
@@ -9,14 +13,14 @@ type Service struct {
 	Payment         Payment
 }
 
-func NewService(db db.DB) *Service {
-	ex := NewExpenditureServices(db)
-	cp := NewCounterpartyServices(db)
-	pr := NewProjectServices(db)
+func NewService(db db.DB, log *logrus.Logger) *Service {
+	ex := NewExpenditureServices(db, log)
+	cp := NewCounterpartyServices(db, log)
+	pr := NewProjectServices(db, log)
 	return &Service{
 		ExpenditureItem: ex,
 		Counterparty:    cp,
 		Project:         pr,
-		Payment:         NewPaymentServices(db, cp, ex, pr),
+		Payment:         NewPaymentServices(db, log, cp, ex, pr),
 	}
 }

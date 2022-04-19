@@ -4,10 +4,11 @@ import (
 	"app/internal/db"
 
 	"github.com/jackc/pgx/v4"
+	"github.com/sirupsen/logrus"
 )
 
 type ExpenditureService interface {
-	ExpenditureCreate(*ExpendaturesFullRequest) (int, error)
+	ExpenditureCreate(*ExpendaturesFullRequest, *logrus.Logger) (int, error)
 }
 
 type ExpendaturesFullRequest struct {
@@ -32,12 +33,12 @@ func (r *ExpendaturesFullRequest) fillToExpendatures(e *db.Expenditures, cpID, e
 	e.Purpose = r.Purpose
 }
 
-func (p *PaymentService) ExpenditureCreate(resp *ExpendaturesFullRequest) (int, error) {
+func (p *PaymentService) ExpenditureCreate(resp *ExpendaturesFullRequest, log *logrus.Logger) (int, error) {
 	var e db.Expenditures
 
-	cpID, err := p.counterparty.CounterpartyFindeByName(&resp.CounterpartyName)
+	cpID, err := p.counterparty.CounterpartyFindeByName(&resp.CounterpartyName, log)
 	if err == pgx.ErrNoRows {
-		cpID, err = p.counterparty.CounterpartyCreate(&resp.CounterpartyName)
+		cpID, err = p.counterparty.CounterpartyCreate(&resp.CounterpartyName, log)
 		if err != nil {
 			return 0, err
 		}
@@ -45,9 +46,9 @@ func (p *PaymentService) ExpenditureCreate(resp *ExpendaturesFullRequest) (int, 
 		return 0, err
 	}
 
-	exID, err := p.expenditureItem.ExpenditureItemCreate(resp.ExpenditureItemName)
+	exID, err := p.expenditureItem.ExpenditureItemCreate(resp.ExpenditureItemName, log)
 	if err == pgx.ErrNoRows {
-		exID, err = p.expenditureItem.ExpenditureItemCreate(resp.ExpenditureItemName)
+		exID, err = p.expenditureItem.ExpenditureItemCreate(resp.ExpenditureItemName, log)
 		if err != nil {
 			return 0, err
 		}
@@ -55,9 +56,9 @@ func (p *PaymentService) ExpenditureCreate(resp *ExpendaturesFullRequest) (int, 
 		return 0, err
 	}
 
-	prID, err := p.project.ProjectCreate(&resp.ProjectName)
+	prID, err := p.project.ProjectCreate(&resp.ProjectName, log)
 	if err == pgx.ErrNoRows {
-		prID, err = p.project.ProjectCreate(&resp.ProjectName)
+		prID, err = p.project.ProjectCreate(&resp.ProjectName, log)
 		if err != nil {
 			return 0, err
 		}
@@ -66,7 +67,7 @@ func (p *PaymentService) ExpenditureCreate(resp *ExpendaturesFullRequest) (int, 
 	}
 
 	resp.fillToExpendatures(&e, cpID, exID, prID)
-	err = p.db.ExpenditureCreate(&e)
+	err = p.db.ExpenditureCreate(&e, log)
 	if err != nil {
 		return 0, err
 	}

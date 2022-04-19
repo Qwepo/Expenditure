@@ -5,14 +5,16 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v4"
+	"github.com/sirupsen/logrus"
 )
 
 type Payment interface {
-	PaymentCreate(*PaymentFullRequest) (int, error)
+	PaymentCreate(*PaymentFullRequest, *logrus.Logger) (int, error)
 }
 
 type PaymentService struct {
 	db              db.DB
+	log             *logrus.Logger
 	counterparty    Counterparty
 	expenditureItem ExpenditureItem
 	project         Project
@@ -44,11 +46,11 @@ func (r *PaymentFullRequest) fillToPayment(p *db.Payment, cpID, exID, prID int) 
 	p.ProjectID = &prID
 }
 
-func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int, error) {
+func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest, log *logrus.Logger) (int, error) {
 	var payment db.Payment
-	cpID, err := p.counterparty.CounterpartyFindeByName(resp.CounterpartyName)
+	cpID, err := p.counterparty.CounterpartyFindeByName(resp.CounterpartyName, log)
 	if err == pgx.ErrNoRows {
-		cpID, err = p.counterparty.CounterpartyCreate(resp.CounterpartyName)
+		cpID, err = p.counterparty.CounterpartyCreate(resp.CounterpartyName, log)
 		if err != nil {
 			return 0, err
 		}
@@ -56,9 +58,9 @@ func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int, error) {
 		return 0, err
 	}
 
-	exID, err := p.expenditureItem.ExpenditureItemCreate(resp.ExpenditureItemName)
+	exID, err := p.expenditureItem.ExpenditureItemCreate(resp.ExpenditureItemName, log)
 	if err == pgx.ErrNoRows {
-		exID, err = p.expenditureItem.ExpenditureItemCreate(resp.ExpenditureItemName)
+		exID, err = p.expenditureItem.ExpenditureItemCreate(resp.ExpenditureItemName, log)
 		if err != nil {
 			return 0, err
 		}
@@ -66,25 +68,25 @@ func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int, error) {
 		return 0, err
 	}
 
-	prID, err := p.project.ProjectCreate(resp.ProjectName)
+	prID, err := p.project.ProjectCreate(resp.ProjectName, log)
 	if err == pgx.ErrNoRows {
-		prID, err = p.project.ProjectCreate(resp.ProjectName)
+		prID, err = p.project.ProjectCreate(resp.ProjectName, log)
 		if err != nil {
 			return 0, err
 		}
 	} else if err != nil {
 		return 0, err
 	}
-	
+
 	resp.fillToPayment(&payment, cpID, exID, prID)
 
-	err = p.db.PaymentCreate(&payment)
+	err = p.db.PaymentCreate(&payment, log)
 	if err != nil {
 		return 0, err
 	}
 	return *payment.ID, nil
 }
 
-func NewPaymentServices(db db.DB, counterparty Counterparty, expenditureItem ExpenditureItem, projcet Project) Payment {
-	return &PaymentService{db: db, counterparty: counterparty, expenditureItem: expenditureItem, project: projcet}
+func NewPaymentServices(db db.DB, log *logrus.Logger, counterparty Counterparty, expenditureItem ExpenditureItem, projcet Project) Payment {
+	return &PaymentService{db: db, log: log, counterparty: counterparty, expenditureItem: expenditureItem, project: projcet}
 }
