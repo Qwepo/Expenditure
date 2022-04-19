@@ -5,22 +5,36 @@ import (
 )
 
 type Project interface {
-	ProjectCreate(*PaymentFullRequest) (int64, error)
+	ProjectCreate(*string) (int, error)
+	ProjectFindeByName(name *string) (int, error)
 }
 
 type projectServices struct {
 	db db.DB
 }
 
-func (pro *projectServices) ProjectCreate(resp *PaymentFullRequest) (int64, error) {
+func (pro *projectServices) ProjectCreate(name *string) (int, error) {
 	var pr db.Project
-
-	pr.Name = resp.ProjectName
-	id, err := pro.db.ProjectCreate(&pr)
+	pr.Name = name
+	err := pro.db.ProjectFindeByName(&pr)
+	if err == nil {
+		return *pr.ID, nil
+	}
+	err = pro.db.ProjectCreate(&pr)
 	if err != nil {
 		return 0, err
 	}
-	return id, nil
+	return *pr.ID, nil
+}
+
+func (pro *projectServices) ProjectFindeByName(name *string) (int, error) {
+	var pr db.Project
+	pr.Name = name
+	err := pro.db.ProjectFindeByName(&pr)
+	if err != nil {
+		return 0, err
+	}
+	return *pr.ID, nil
 }
 
 func NewProjectServices(db db.DB) Project {

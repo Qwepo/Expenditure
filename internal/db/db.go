@@ -10,6 +10,7 @@ import (
 
 type DB interface {
 	dbPayment
+	dbExpenditures
 }
 
 type Clietn interface {
