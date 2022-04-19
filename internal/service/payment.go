@@ -3,6 +3,8 @@ package service
 import (
 	"app/internal/db"
 	"time"
+
+	"github.com/jackc/pgx/v4"
 )
 
 type Payment interface {
@@ -44,9 +46,9 @@ func (r *PaymentFullRequest) fillToPayment(p *db.Payment, cpID, exID, prID int) 
 
 func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int, error) {
 	var payment db.Payment
-	cpID, err := p.counterparty.CounterpartyFindeByName(&resp.CounterpartyName)
+	cpID, err := p.counterparty.CounterpartyFindeByName(resp.CounterpartyName)
 	if err == pgx.ErrNoRows {
-		cpID, err = p.counterparty.CounterpartyCreate(&resp.CounterpartyName)
+		cpID, err = p.counterparty.CounterpartyCreate(resp.CounterpartyName)
 		if err != nil {
 			return 0, err
 		}
@@ -64,14 +66,16 @@ func (p *PaymentService) PaymentCreate(resp *PaymentFullRequest) (int, error) {
 		return 0, err
 	}
 
-	prID, err := p.project.ProjectCreate(&resp.ProjectName)
+	prID, err := p.project.ProjectCreate(resp.ProjectName)
 	if err == pgx.ErrNoRows {
-		prID, err = p.project.ProjectCreate(&resp.ProjectName)
+		prID, err = p.project.ProjectCreate(resp.ProjectName)
 		if err != nil {
 			return 0, err
 		}
 	} else if err != nil {
-		return 0
+		return 0, err
+	}
+	
 	resp.fillToPayment(&payment, cpID, exID, prID)
 
 	err = p.db.PaymentCreate(&payment)
